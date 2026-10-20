@@ -4,7 +4,17 @@ A local desktop git client modeled on SourceTree.
 
 ![Treeline showing a commit graph with branches, tags and a word-level diff](docs/screenshot.png)
 
-## Run
+## Install
+
+Download the latest build from
+[Releases](https://github.com/Noam5/treeline/releases):
+
+- **Debian / Ubuntu:** `sudo apt install ./treeline_<version>_amd64.deb`
+- **Other Linux:** `chmod +x Treeline-<version>.AppImage` and run it
+
+Treeline needs `git` on your `PATH`.
+
+## Build from source
 
 Install once:
 

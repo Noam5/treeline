@@ -15,6 +15,20 @@ files:
 asarUnpack:
   - web/dist/**
 linux:
-  target: AppImage
+  target: [AppImage, deb]
   category: Development
   icon: build/icon.png
+  maintainer: noam <246069+Noam5@users.noreply.github.com>
+deb:
+  # electron-builder's default dependencies, plus git, which the app shells out to.
+  depends:
+    - libgtk-3-0
+    - libnotify4
+    - libnss3
+    - libxss1
+    - libxtst6
+    - xdg-utils
+    - libatspi2.0-0
+    - libuuid1
+    - libsecret-1-0
+    - git
