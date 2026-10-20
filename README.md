@@ -1,7 +1,6 @@
 # Treeline
 
-A local desktop git client modeled on SourceTree. Runs entirely on
-`127.0.0.1`; shells out to your system `git` (which handles all auth).
+A local desktop git client modeled on SourceTree.
 
 ![Treeline showing a commit graph with branches, tags and a word-level diff](docs/screenshot.png)
 
