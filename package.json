@@ -1,0 +1,24 @@
+{
+  "name": "treeline",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "A local desktop git client modeled on SourceTree",
+  "author": "noam",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev --prefix web\" \"npm run electron:wait\"",
+    "electron:wait": "wait-on tcp:127.0.0.1:5173 && electron .",
+    "test": "npm test --prefix server && npm test --prefix web && node --test \"electron/test/**/*.test.js\"",
+    "build": "npm run build --prefix web",
+    "dist": "npm run build && electron-builder --linux AppImage",
+    "deploy": "npm run dist && scripts/deploy.sh"
+  },
+  "dependencies": { "express": "^4.19.0" },
+  "devDependencies": {
+    "concurrently": "^9.0.0",
+    "electron": "^43.4.0",
+    "electron-builder": "^26.15.3",
+    "wait-on": "^9.1.0"
+  }
+}

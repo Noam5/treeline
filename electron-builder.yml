@@ -1,0 +1,20 @@
+appId: dev.treeline.app
+productName: Treeline
+directories:
+  output: dist
+  buildResources: build
+files:
+  - electron/**
+  - "!electron/test/**"
+  - server/src/**
+  - web/dist/**
+  - package.json
+# express.static reading through an asar archive is a known soft spot;
+# unpack just the frontend so serve-static touches the real filesystem.
+# This path must stay in sync with resolveWebDist() in electron/runtime.js.
+asarUnpack:
+  - web/dist/**
+linux:
+  target: AppImage
+  category: Development
+  icon: build/icon.png

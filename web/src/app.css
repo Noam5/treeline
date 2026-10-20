@@ -1,0 +1,566 @@
+/* ---- Theme palettes ---- */
+:root {
+  --bg: #ffffff;
+  --bg-alt: #f4f5f7;
+  --bg-faint: #fafbfc;
+  --toolbar-top: #fafbfc;
+  --toolbar-bottom: #eef0f2;
+  --text: #333a44;
+  --text-strong: #2b333d;
+  --text-muted: #8993a4;
+  --border: #d8dce0;
+  --border-strong: #c9ced6;
+  --border-faint: #eef0f2;
+  --hover: #eef4fd;
+  --hover-alt: #e9ebef;
+  --accent: #2f7ce0;
+  --accent-strong: #1b6ac9;
+  --accent-soft: #e4ebf7;
+  --accent-border: #b9cdec;
+  --sel: #d8e6fb;
+  --btn-bg: #f0f1f3;
+  --btn-hover: #e2e6ea;
+  --diff-add-bg: #e6ffed; --diff-add-fg: #22863a;
+  --diff-del-bg: #ffeef0; --diff-del-fg: #b31d28;
+  --diff-add-word: #abf2bc; --diff-del-word: #ffc1c0;
+  --diff-meta-bg: #f1f8ff; --diff-meta-fg: #6a737d;
+  --error-bg: #ffeef0; --error-fg: #b3261e; --error-border: #f3c2c2;
+  --warn-bg: #fff6dd; --warn-fg: #7a5200; --warn-border: #ecd28c;
+}
+body.dark {
+  --bg: #0d1117;
+  --bg-alt: #161b22;
+  --bg-faint: #11161d;
+  --toolbar-top: #1c2128;
+  --toolbar-bottom: #161b22;
+  --text: #c9d1d9;
+  --text-strong: #e6edf3;
+  --text-muted: #8b949e;
+  --border: #30363d;
+  --border-strong: #444c56;
+  --border-faint: #21262d;
+  --hover: #1c2433;
+  --hover-alt: #1c2128;
+  --accent: #4c8dff;
+  --accent-strong: #6ea8fe;
+  --accent-soft: #173153;
+  --accent-border: #2f5a92;
+  --sel: #1f3a5f;
+  --btn-bg: #21262d;
+  --btn-hover: #30363d;
+  --diff-add-bg: #12261b; --diff-add-fg: #3fb950;
+  --diff-del-bg: #341a1f; --diff-del-fg: #f85149;
+  --diff-add-word: rgba(46, 160, 67, .45); --diff-del-word: rgba(248, 81, 73, .42);
+  --diff-meta-bg: #132134; --diff-meta-fg: #8b949e;
+  --error-bg: #3a1417; --error-fg: #ffb3b3; --error-border: #6e2a2a;
+  --warn-bg: #2e2410; --warn-fg: #f2cc60; --warn-border: #6b5418;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+}
+.app { display: flex; flex-direction: column; height: 100vh; }
+/* One per open tab. `hidden` needs an explicit rule: display:flex would
+   otherwise override the attribute's default display:none. */
+.workspace { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.workspace[hidden] { display: none; }
+.no-repo {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; color: var(--text-muted);
+}
+
+/* ---- Tab strip ---- */
+.tab-strip {
+  display: flex; align-items: stretch; gap: 2px;
+  padding: 4px 6px 0; background: var(--bg-alt);
+  border-bottom: 1px solid var(--border-strong);
+  overflow-x: auto;
+}
+.tab {
+  display: flex; align-items: center; gap: 6px; flex: 0 1 auto; min-width: 0; max-width: 220px;
+  padding: 5px 8px 5px 12px; cursor: pointer;
+  background: var(--btn-bg); color: var(--text-muted);
+  border: 1px solid var(--border); border-bottom: none;
+  border-radius: 6px 6px 0 0; font-size: 12px;
+}
+.tab:hover { background: var(--btn-hover); }
+.tab.active { background: var(--bg); color: var(--text-strong); font-weight: 600;
+  box-shadow: inset 0 2px 0 var(--accent); }
+.tab.dragging { opacity: .5; }
+.tab-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  user-select: none; /* dragging a tab must not select its label */ }
+.tab-close {
+  flex: 0 0 auto; width: 16px; height: 16px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; border: none; border-radius: 50%;
+  color: inherit; cursor: pointer; font-size: 10px; line-height: 1;
+  opacity: 0; transition: opacity .12s ease, background .12s ease;
+}
+.tab:hover .tab-close, .tab.active .tab-close { opacity: .7; }
+.tab-close:hover { opacity: 1; background: rgba(127, 127, 127, .3); }
+.tab-new {
+  flex: 0 0 auto; justify-content: center; width: 34px; padding: 5px 0;
+  background: transparent; border-style: dashed; color: var(--text-muted);
+  font-size: 15px; line-height: 1;
+}
+.tab-new:hover { background: var(--btn-hover); color: var(--text); border-style: solid; }
+
+/* ---- Toolbar ---- */
+.toolbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 6px 12px;
+  background: linear-gradient(var(--toolbar-top), var(--toolbar-bottom));
+  border-bottom: 1px solid var(--border-strong);
+}
+.tb-actions { display: flex; gap: 2px; align-items: center; }
+.tb-sep { width: 1px; align-self: stretch; margin: 4px 6px; background: var(--border-strong); }
+.tb-btn {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  min-width: 52px; padding: 4px 8px;
+  background: transparent; border: 1px solid transparent; border-radius: 6px;
+  color: var(--text); cursor: pointer;
+}
+.tb-btn:hover:not(:disabled) { background: var(--btn-hover); border-color: var(--border-strong); }
+.tb-btn:disabled { cursor: default; }
+.tb-btn:disabled:not(.busy) { opacity: .45; }
+.tb-icon { display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; }
+.icon { display: block; flex: 0 0 auto; }
+.tb-label { font-size: 11px; }
+/* Discard throws work away: it must not read like Stash next to it. */
+.tb-btn.danger { color: var(--error-fg); }
+.tb-btn.danger:hover:not(:disabled) { background: var(--error-bg); border-color: var(--error-border); }
+/* A fetch, pull or push in flight. */
+.tb-btn.busy { color: var(--accent-strong); background: var(--accent-soft); border-color: var(--accent-border); }
+.tb-btn.busy .tb-icon { animation: tb-busy 1s ease-in-out infinite; }
+@keyframes tb-busy { 50% { opacity: .3; transform: translateY(1px); } }
+@media (prefers-reduced-motion: reduce) { .tb-btn.busy .tb-icon { animation: none; } }
+.tb-badge {
+  position: absolute; top: 0; right: 6px;
+  background: var(--accent); color: #fff; font-size: 10px; line-height: 1;
+  padding: 2px 5px; border-radius: 9px;
+}
+.tb-right { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end; }
+.tb-theme {
+  background: var(--btn-bg); border: 1px solid var(--border-strong); color: var(--text);
+  width: 30px; height: 30px; border-radius: 6px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; padding: 0;
+}
+.tb-theme:hover { background: var(--btn-hover); }
+.repo-input {
+  width: 280px; background: var(--bg); border: 1px solid var(--border-strong);
+  color: var(--text); padding: 5px 8px; border-radius: 5px;
+}
+.repo-browse {
+  flex: 0 0 auto; white-space: nowrap;
+  background: var(--btn-bg); border: 1px solid var(--border-strong); color: var(--text);
+  padding: 5px 10px; border-radius: 5px; cursor: pointer;
+}
+.repo-browse:hover { background: var(--btn-hover); }
+/* The active tab's repository, shown not edited. Truncates at the head like
+   the picker's path bar, so the folder you are in stays visible. */
+.repo-path {
+  max-width: 320px; padding: 5px 8px;
+  background: var(--bg-alt); border: 1px solid var(--border); border-radius: 5px;
+  color: var(--text-muted); font-size: 12px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  direction: rtl; text-align: left;
+}
+.repo-path > span { direction: ltr; unicode-bidi: embed; }
+.current-branch-chip {
+  background: var(--accent-soft); border: 1px solid var(--accent-border); color: var(--accent-strong);
+  border-radius: 12px; padding: 3px 10px; font-size: 12px; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+
+.error-bar { display: flex; align-items: flex-start; gap: 8px; background: var(--error-bg); color: var(--error-fg); padding: 6px 12px; font-size: 13px; border-bottom: 1px solid var(--error-border); white-space: pre-wrap; }
+.bar-msg { flex: 1; min-width: 0; }
+.bar-close {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px;
+  background: transparent; border: none; border-radius: 50%;
+  color: inherit; cursor: pointer; font-size: 13px; line-height: 1;
+  opacity: .65; transition: background .12s ease, opacity .12s ease;
+}
+.bar-close:hover { opacity: 1; background: rgba(127, 127, 127, .25); }
+.bar-close:active { background: rgba(127, 127, 127, .4); }
+.notice-bar { display: flex; align-items: flex-start; gap: 8px; background: var(--accent-soft); color: var(--accent-strong); padding: 6px 12px; font-size: 13px; border-bottom: 1px solid var(--accent-border); white-space: pre-wrap; }
+/* A merge stopped on conflicts. Not dismissable: it stays until the merge is
+   committed or aborted, because until then the repository is not normal. */
+.merge-banner { display: flex; align-items: center; gap: 8px; background: var(--warn-bg); color: var(--warn-fg); padding: 6px 12px; font-size: 13px; border-bottom: 1px solid var(--warn-border); }
+.merge-banner button { flex: 0 0 auto; background: var(--btn-bg); color: var(--text); border: 1px solid var(--border-strong); border-radius: 4px; padding: 3px 10px; font-size: 12px; cursor: pointer; }
+.merge-banner button:hover:not(:disabled) { background: var(--btn-hover); }
+.merge-banner button:disabled { opacity: .5; cursor: default; }
+
+/* ---- Right-click context menu ---- */
+.ctx-menu { position: fixed; z-index: 200; background: var(--bg); border: 1px solid var(--border-strong); border-radius: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.3); padding: 4px 0; min-width: 170px; font-size: 13px; }
+.ctx-item { padding: 6px 14px; cursor: pointer; color: var(--text); }
+.ctx-item:hover { background: var(--hover); }
+.ctx-item.danger { color: var(--diff-del-fg); }
+
+/* ---- Modal (branch picker) ---- */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
+.modal { background: var(--bg); color: var(--text); border: 1px solid var(--border-strong); border-radius: 8px; min-width: 300px; max-width: 420px; max-height: 70vh; display: flex; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+.modal-title { padding: 12px 16px; font-weight: 600; border-bottom: 1px solid var(--border); }
+.modal-list { overflow: auto; padding: 6px 0; }
+.modal-item { padding: 7px 16px; cursor: pointer; }
+.modal-item:hover { background: var(--hover); }
+.modal-empty { padding: 18px 16px; color: var(--text-muted); }
+.modal-actions { padding: 10px 16px; border-top: 1px solid var(--border); text-align: right; }
+.modal-actions button { background: var(--btn-bg); border: 1px solid var(--border-strong); color: var(--text); padding: 6px 14px; border-radius: 5px; cursor: pointer; }
+.modal-actions button:hover { background: var(--btn-hover); }
+
+/* ---- Dialog (the app's own prompt / confirm) ---- */
+.dialog { width: 400px; }
+.dialog-body { padding: 14px 16px 12px; display: flex; flex-direction: column; gap: 8px; }
+.dialog-message { margin: 0; line-height: 1.45; overflow-wrap: anywhere; }
+.dialog-input {
+  background: var(--bg); color: var(--text); border: 1px solid var(--border-strong);
+  border-radius: 5px; padding: 6px 8px; font: inherit;
+}
+.dialog-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.dialog-input[aria-invalid="true"] { border-color: var(--error-fg); box-shadow: 0 0 0 3px var(--error-bg); }
+.dialog-error { color: var(--error-fg); font-size: 12px; }
+.dialog .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.dialog .modal-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.modal-actions button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.modal-actions button.primary:hover:not(:disabled) { background: var(--accent-strong); }
+/* Destructive, so it reads as a warning rather than as the way forward. */
+.modal-actions button.danger { background: var(--error-bg); border-color: var(--error-border); color: var(--error-fg); font-weight: 600; }
+.modal-actions button.danger:hover { filter: brightness(0.95); }
+
+/* ---- Body / sidebar ---- */
+.body { display: flex; flex: 1; min-height: 0; }
+.sidebar {
+  width: 210px; padding: 8px 0; background: var(--bg-alt);
+  border-right: 1px solid var(--border); font-size: 13px; overflow: auto;
+}
+.sidebar .label {
+  text-transform: uppercase; font-size: 10px; font-weight: 600; letter-spacing: .04em;
+  color: var(--text-muted); margin: 12px 0 2px; padding: 0 14px;
+}
+.sidebar > div { cursor: pointer; line-height: 2; padding: 0 14px; color: var(--text); }
+.sidebar > div:hover { background: var(--hover-alt); }
+.sidebar .active, .sidebar .current-branch { color: var(--accent-strong); font-weight: 700; }
+.sidebar .selected-branch, .sidebar .selected-branch:hover,
+.sidebar .selected-tag, .sidebar .selected-tag:hover { background: var(--sel); }
+.sidebar-empty { padding: 0 14px; line-height: 2; color: var(--text-muted); opacity: .7; font-size: 12px; }
+
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--bg); }
+/* A flex column, so the commit graph can fill it and scroll itself (it renders
+   only the rows in view, which needs its own scroll offset). The other views
+   keep their content height and scroll with .main-top as before. */
+.main-top { flex: 1; overflow: auto; display: flex; flex-direction: column; }
+
+/* ---- Commit graph (columns: Graph | Commit | Author | Description | Date) ---- */
+.commit-graph { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: auto; }
+.graph-head {
+  display: flex; align-items: stretch; height: 28px;
+  flex: none; /* .commit-graph scrolls as a fixed-height column, which would shrink it */
+  position: sticky; top: 0; z-index: 1;
+  background: var(--bg-alt); border-bottom: 1px solid var(--border);
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--text-muted);
+}
+.graph-head > span { display: flex; align-items: center; padding: 0 10px; position: relative; }
+.col-resize {
+  position: absolute; top: 0; right: 0; width: 9px; height: 100%; cursor: col-resize;
+  border-right: 2px solid var(--border-strong);
+}
+.col-resize:hover { background: var(--accent); border-right-color: var(--accent); }
+/* static dividers for the non-resizable Graph and Description columns */
+.graph-head-graph, .graph-head .col-desc { border-right: 2px solid var(--border-strong); }
+.graph-body { display: flex; align-items: flex-start; }
+.graph-svg { display: block; }
+.graph-node { stroke: var(--bg); stroke-width: 2; }
+.graph-rows { flex: 1; min-width: 0; }
+.graph-row { display: flex; align-items: center; cursor: pointer; border-bottom: 1px solid var(--border-faint);
+  scroll-margin-top: 28px; /* clear the sticky graph header when scrolled to the top */ }
+.graph-row:hover { background: var(--hover); }
+.graph-row.selected, .graph-row.selected:hover { background: var(--sel); }
+.graph-row.head { box-shadow: inset 3px 0 0 var(--accent); } /* marks the checked-out commit */
+.graph-row.working .working-label { color: var(--text-muted); font-style: italic; }
+/* shared column widths between header and rows */
+.col-commit { flex: 0 0 84px; width: 84px; padding: 0 10px; color: var(--text-muted); }
+.col-author { flex: 0 0 200px; width: 200px; padding: 0 10px; color: var(--text-muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.graph-row .col-author { display: flex; align-items: center; gap: 6px; }
+.author-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.avatar {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%;
+  color: #fff; font-size: 8.5px; font-weight: 700; letter-spacing: .02em;
+}
+.col-desc { flex: 1; min-width: 0; padding: 0 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-strong); }
+.col-date { flex: 0 0 132px; width: 132px; padding: 0 10px; color: var(--text-muted); font-size: 12px; white-space: nowrap; }
+.col-commit.mono { font-family: ui-monospace, Menlo, Consolas, monospace; }
+/* Ref pills take their lane's color (--ref); the kind shows in icon and shape:
+   local solid, remote dashed, tag rounded, HEAD filled and bold. */
+.ref-pill {
+  display: inline-flex; align-items: center; gap: 3px; vertical-align: 1px;
+  border: 1px solid var(--ref); border-radius: 4px; padding: 0 6px 0 4px; margin-right: 6px;
+  font-size: 10px; line-height: 15px; color: var(--ref); background: var(--bg);
+}
+.ref-icon { flex: none; }
+.ref-remote { border-style: dashed; }
+.ref-tag { border-radius: 999px; padding-left: 5px; }
+.ref-head, .ref-detached {
+  background: color-mix(in srgb, var(--ref) 22%, var(--bg)); color: var(--text-strong);
+  border-width: 1.5px; font-weight: 700;
+}
+.ref-head .ref-icon, .ref-detached .ref-icon { color: var(--ref); }
+/* Row density toggle, at the right end of the column header. */
+.graph-density {
+  flex: none; align-self: center; margin: 0 4px; width: 22px; height: 20px; padding: 0;
+  border: 1px solid transparent; border-radius: 4px; background: transparent;
+  color: var(--text-muted); font-size: 13px; line-height: 1; cursor: pointer;
+}
+.graph-density:hover { background: var(--btn-hover); border-color: var(--border-strong); color: var(--text); }
+
+/* ---- Diff pane: master-detail ---- */
+.row-splitter { flex: 0 0 6px; height: 6px; cursor: row-resize; background: var(--border); }
+.row-splitter:hover { background: var(--accent); }
+/* Vertical divider between a list and the code beside it. */
+.col-splitter { flex: 0 0 6px; width: 6px; cursor: col-resize; background: var(--border); }
+.col-splitter:hover { background: var(--accent); }
+.diff-wrap { overflow: hidden; min-height: 80px; }
+/* Uncommitted-changes panel: file lists (left) + diff (right), shown in the History view */
+/* Column: the two panes on top, the commit box across the bottom. */
+.uncommitted-panel { display: flex; flex-direction: column; height: 100%; }
+.uncommitted-row { display: flex; flex: 1; min-height: 0; }
+/* Width comes from the splitter; the max keeps it sane in a narrow window. */
+.uncommitted-files { min-width: 0; max-width: 70%; overflow: hidden; }
+.uncommitted-diff { flex: 1; min-width: 0; overflow: hidden; }
+.diff-pane { height: 100%; display: flex; flex-direction: column; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; overflow: hidden; background: var(--bg); }
+.diff-split { flex-direction: row; }
+.diff-filelist { max-width: 60%; overflow: auto; background: var(--bg-faint); }
+.diff-fileitem { padding: 5px 10px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 1px solid var(--border-faint); color: var(--text); }
+.diff-fileitem:hover { background: var(--hover); }
+.diff-fileitem.sel { background: var(--sel); color: var(--accent-strong); font-weight: 600; }
+.fi-icon { display: inline-block; width: 14px; margin-right: 6px; font-weight: 700; text-align: center; }
+.fi-added { color: var(--diff-add-fg); }
+.fi-deleted { color: var(--diff-del-fg); }
+.fi-modified { color: #d29922; }
+.fi-renamed { color: var(--accent); }
+.diff-detail { flex: 1; min-width: 0; min-height: 0; overflow: auto; white-space: pre; padding: 0; color: var(--text); }
+.diff-detail > div { min-height: 1em; }
+
+/* ---- One file's diff: notes, then a block per hunk ---- */
+.diff-file + .diff-file { margin-top: 14px; }
+.diff-file-name {
+  position: sticky; top: 0; z-index: 2;
+  padding: 5px 10px; background: var(--bg-alt); border-bottom: 1px solid var(--border);
+  color: var(--text-strong); font-weight: 600;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.diff-note { padding: 2px 10px; color: var(--text-muted); font-size: 11px; }
+
+/* A hunk is a block, so boundaries read as structure rather than as one more
+   tinted row. The rule and the gap above it do the separating. */
+.hunk + .hunk { margin-top: 10px; border-top: 1px solid var(--border-strong); }
+.hunk-header {
+  display: flex; gap: 12px; align-items: baseline;
+  padding: 3px 10px; background: var(--bg-alt); color: var(--text-muted);
+  border-bottom: 1px solid var(--border-faint); font-size: 11px;
+}
+.hunk-range { flex: 0 0 auto; font-weight: 600; }
+.hunk-context { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: .85; }
+
+/* Per-hunk actions. Subdued until the hunk is pointed at or focused, so a long
+   diff still reads as code rather than as a column of buttons — but never
+   fully hidden, or the feature is invisible to anyone not hunting for it. */
+.hunk-actions { flex: 0 0 auto; display: flex; gap: 4px; opacity: .55; transition: opacity .1s; }
+.hunk:hover .hunk-actions, .hunk-actions:focus-within { opacity: 1; }
+.hunk-btn {
+  background: var(--btn-bg); border: 1px solid var(--border-strong); color: var(--text);
+  font: inherit; font-size: 10px; line-height: 1; padding: 3px 7px;
+  border-radius: 4px; cursor: pointer;
+}
+.hunk-btn:hover { background: var(--btn-hover); }
+.hunk-btn.danger { color: var(--diff-del-fg); }
+
+.diff-row { display: flex; min-height: 1em; }
+/* Sticky gutters, so the numbers stay put when a long line is scrolled. */
+.ln {
+  flex: 0 0 3.5em; width: 3.5em; padding: 0 6px; text-align: right;
+  position: sticky; background: inherit;
+  color: var(--text-muted); opacity: .8; font-size: 11px;
+  user-select: none; /* keep line numbers out of copied text */
+}
+.ln-old { left: 0; }
+.ln-new { left: 3.5em; box-shadow: inset -1px 0 0 var(--border-faint); }
+.code { flex: 1; min-width: 0; padding: 0 10px; }
+.diff-add { background: var(--diff-add-bg); color: var(--diff-add-fg); }
+.diff-del { background: var(--diff-del-bg); color: var(--diff-del-fg); }
+.diff-meta { background: var(--diff-meta-bg); color: var(--diff-meta-fg); }
+/* placeholder text: keep it text-width, not stretched by the flex column */
+.diff-pane > .diff-meta { padding: 8px 10px; align-self: flex-start; }
+/* The words that changed within a removed/added line pair. */
+.diff-word { border-radius: 2px; }
+.diff-del .diff-word { background: var(--diff-del-word); }
+.diff-add .diff-word { background: var(--diff-add-word); }
+
+/* Code column beside the file list: layout toggle above the diff. */
+.diff-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.diff-toolbar {
+  flex: none; display: flex; justify-content: flex-end; padding: 3px 8px;
+  background: var(--bg-faint); border-bottom: 1px solid var(--border);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.seg { display: inline-flex; border: 1px solid var(--border-strong); border-radius: 5px; overflow: hidden; }
+.seg button {
+  background: var(--btn-bg); color: var(--text-muted); border: none; cursor: pointer;
+  font: inherit; font-size: 11px; padding: 2px 9px;
+}
+.seg button + button { border-left: 1px solid var(--border-strong); }
+.seg button:hover { background: var(--btn-hover); color: var(--text); }
+.seg button.on { background: var(--accent-soft); color: var(--accent-strong); font-weight: 600; }
+
+/* Side by side: old | new, each half wrapping its own long lines. */
+.split-row { display: grid; grid-template-columns: 3.5em minmax(0, 1fr) 3.5em minmax(0, 1fr); min-height: 1em; }
+.split-row .ln { position: static; width: auto; }
+.split-row .ln-new { box-shadow: inset 1px 0 0 var(--border); }
+.split-row .code { white-space: pre-wrap; overflow-wrap: anywhere; }
+.split-empty { background: var(--bg-faint); }
+
+/* ---- Commit details: a readable header in place of raw `git show` text ---- */
+.commit-header {
+  padding: 14px 16px 16px; white-space: normal; color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 13px;
+}
+.ch-subject { font-size: 15px; font-weight: 650; color: var(--text-strong); line-height: 1.35; }
+.ch-body { margin-top: 8px; white-space: pre-wrap; line-height: 1.45; color: var(--text); max-width: 80ch; }
+.ch-meta {
+  margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-faint);
+  display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; align-items: center;
+}
+.ch-key { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+.ch-author { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.ch-email, .ch-ago { color: var(--text-muted); }
+.ch-hash, .ch-parents, .ch-refs { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.ch-hash code, .ch-parents code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; overflow-wrap: anywhere; }
+.ch-copy, .ch-parent {
+  background: var(--btn-bg); border: 1px solid var(--border-strong); color: var(--text);
+  border-radius: 4px; padding: 1px 8px; font-size: 11px; cursor: pointer;
+}
+.ch-copy:hover, .ch-parent:hover { background: var(--btn-hover); }
+.ch-parent { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: var(--accent-strong); }
+.ch-refs .ref-pill { margin-right: 0; }
+/* Text git show prints after the message (a merge's combined diff), kept raw. */
+.commit-header ~ div { padding: 0 10px; }
+
+/* ---- Repo picker (folder browser) ---- */
+/* Long paths truncate at the head, so the folder you are in stays visible:
+   the box is RTL to move the ellipsis to the left, and the inner span is an
+   LTR embedding so the path itself still reads in order (without it, bidi
+   reordering moves the leading '/' to the end). */
+.picker-path {
+  padding: 6px 16px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px;
+  color: var(--text-muted); border-bottom: 1px solid var(--border-faint);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; direction: rtl; text-align: left;
+}
+.picker-path > span { direction: ltr; unicode-bidi: embed; }
+.picker-error { padding: 8px 16px; background: var(--error-bg); color: var(--error-fg); font-size: 12px; }
+
+/* Filter box. Full width and flush against the path above it, so it reads as
+   part of the dialog's header rather than as a field to fill in. */
+.picker-search {
+  margin: 8px 16px; padding: 6px 8px; font: inherit;
+  background: var(--bg); color: var(--text);
+  border: 1px solid var(--border-strong); border-radius: 5px;
+}
+.picker-search:focus { outline: none; border-color: var(--accent); }
+/* Sits under the list, so a narrowed list says what it is a part of. */
+.picker-count {
+  padding: 6px 16px; border-top: 1px solid var(--border-faint);
+  color: var(--text-muted); font-size: 11px;
+}
+.picker-row { display: flex; align-items: center; gap: 8px; }
+.picker-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.picker-icon { flex: 0 0 14px; text-align: center; color: var(--text-muted); }
+.picker-icon.is-repo { color: var(--accent); font-weight: 700; }
+.picker-open {
+  flex: 0 0 auto; background: var(--btn-bg); border: 1px solid var(--border-strong); color: var(--text);
+  font-size: 11px; padding: 2px 8px; border-radius: 4px; cursor: pointer;
+}
+.picker-open:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+.picker-actions { display: flex; align-items: center; gap: 8px; }
+.picker-spacer { flex: 1; }
+.picker-system { background: var(--btn-bg); }
+.modal-actions button[disabled] { opacity: .5; cursor: default; }
+
+/* ---- Search view ---- */
+.search-view { display: flex; flex-direction: column; height: 100%; }
+.search-bar { display: flex; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--border); background: var(--bg-alt); }
+.search-bar select, .search-bar input { background: var(--bg); color: var(--text); border: 1px solid var(--border-strong); border-radius: 5px; padding: 5px 8px; }
+.search-input { flex: 1; }
+.search-bar button { background: var(--accent); color: #fff; border: 1px solid var(--accent); border-radius: 5px; padding: 5px 14px; cursor: pointer; }
+.search-results { flex: 1; overflow: auto; }
+.search-hint { padding: 16px; color: var(--text-muted); }
+.search-row { display: flex; align-items: center; gap: 10px; padding: 5px 12px; cursor: pointer; border-bottom: 1px solid var(--border-faint); }
+.search-row:hover { background: var(--hover); }
+.search-hash { font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--text-muted); flex: 0 0 64px; }
+.search-subject { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-strong); }
+.search-author { flex: 0 0 150px; color: var(--text-muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.search-date { flex: 0 0 132px; color: var(--text-muted); font-size: 12px; white-space: nowrap; }
+
+/* ---- File status: staged (top) / unstaged (bottom) ---- */
+.file-status { display: flex; flex-direction: column; height: 100%; outline: none; }
+.fs-pane { flex: 1; min-height: 0; overflow: auto; padding: 0 12px 8px; }
+.fs-unstaged { border-top: 1px solid var(--border); }
+.fs-conflicted { flex: 0 1 auto; max-height: 40%; border-bottom: 1px solid var(--border); }
+.fs-conflicted .fs-pane-title { color: var(--warn-fg); }
+.fs-conflicted .fs-code { width: 22px; color: var(--warn-fg); font-weight: 600; font-size: 11px; }
+.fs-pane-title {
+  position: sticky; top: 0; background: var(--bg-alt);
+  text-transform: uppercase; font-size: 10px; font-weight: 600; letter-spacing: .04em;
+  color: var(--text-muted); padding: 4px 8px 3px 12px; margin: 0 -12px 4px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 26px;
+}
+.fs-bulk {
+  text-transform: none; letter-spacing: 0; font: inherit; font-size: 11px; font-weight: 500;
+  background: var(--btn-bg); color: var(--text); border: 1px solid var(--border-strong);
+  border-radius: 4px; padding: 1px 8px; cursor: pointer;
+}
+.fs-bulk:hover:not(:disabled) { background: var(--btn-hover); }
+.fs-bulk:disabled { opacity: .45; cursor: default; }
+.fs-empty { color: var(--text-muted); opacity: .7; font-size: 12px; padding: 4px 0; }
+.fs-row { display: flex; align-items: center; gap: 8px; padding: 2px 0; }
+.fs-row.selected { background: var(--sel); border-radius: 4px; }
+/* With the list focused, the arrow keys and Space act on the selected row. */
+.file-status:focus .fs-row.selected { box-shadow: inset 2px 0 0 var(--accent); }
+.fs-code { width: 16px; text-align: center; color: var(--text-muted); }
+.fs-path {
+  flex: 1; min-width: 0; cursor: pointer; color: var(--text-strong);
+  display: flex; align-items: baseline; gap: 6px;
+  white-space: nowrap; overflow: hidden;
+}
+/* A long path gives up its directory before the name starts to shrink. */
+.fs-name, .fs-dir, .fs-orig { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.fs-name { flex: 0 1 auto; font-weight: 500; }
+.fs-dir, .fs-orig { flex: 0 1000 auto; color: var(--text-muted); font-size: 12px; }
+.fs-path:hover .fs-name { color: var(--accent-strong); }
+.fs-row button { background: var(--btn-bg); border: 1px solid var(--border-strong); color: var(--text); width: 22px; border-radius: 4px; cursor: pointer; }
+.fs-row button:hover { background: var(--btn-hover); }
+.fs-commit { flex: 0 0 auto; padding: 8px 12px; border-top: 1px solid var(--border); background: var(--bg-alt); }
+.fs-commit textarea { width: 100%; height: 60px; background: var(--bg); color: var(--text); border: 1px solid var(--border-strong); border-radius: 5px; padding: 6px; font-family: inherit; }
+.fs-commit textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+.commit-actions { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+.commit-spacer { flex: 1; }
+.commit-amend { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text); cursor: pointer; user-select: none; }
+.commit-amend input { margin: 0; accent-color: var(--accent); }
+.commit-subject-len { font-size: 11px; font-variant-numeric: tabular-nums; color: var(--text-muted); }
+.commit-subject-len.long { color: var(--warn-fg); }
+.commit-subject-len.too-long { color: var(--error-fg); font-weight: 600; }
+.commit-warn {
+  margin-top: 6px; padding: 5px 8px; font-size: 12px; border-radius: 5px;
+  background: var(--warn-bg); color: var(--warn-fg); border: 1px solid var(--warn-border);
+}
+.commit-actions button { background: var(--accent); border: 1px solid var(--accent); color: #fff; padding: 6px 16px; border-radius: 5px; cursor: pointer; }
+.commit-actions button:hover:not(:disabled) { filter: brightness(0.94); }
+.commit-actions button:disabled { opacity: .5; cursor: default; }

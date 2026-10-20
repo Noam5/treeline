@@ -1,0 +1,9 @@
+{
+  "name": "server",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test"
+  },
+  "devDependencies": { "supertest": "^7.0.0" }
+}
